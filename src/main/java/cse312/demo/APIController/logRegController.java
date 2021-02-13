@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import cse312.demo.Model.User;
 
 
-//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:8081")
 @RestController
-@RequestMapping("/")
+//@RequestMapping("/")
 public class logRegController {
   public final UserService userService;
 
@@ -22,7 +22,7 @@ public class logRegController {
     this.userService = userService;
   }
 
-  @PostMapping("/register")
+  @PostMapping("/registerform")
   public boolean userRegister(@RequestBody User user) {
     if(userService.checkUser(user.getUserName())) return false;
     userService.insertUser(user);
