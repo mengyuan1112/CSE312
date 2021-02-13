@@ -4,7 +4,7 @@
     <label label = "userName">Username: </label><br>
     <input type="text" v-model = "userName"><br>
     <label for="password">Password: </label><br>
-    <input type="password" id="password"><br>
+    <input type="password" id="password" v-model = "accountPassword"><br>
     <button type="submit" @click = "submitLogin">Login</button>
     <br>
     <router-link to="/register">I do not have an account, register Now!</router-link>
