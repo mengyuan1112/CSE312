@@ -4,8 +4,7 @@ package cse312.demo.APIController;
 import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-//import com.sun.istack.internal.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.sun.istack.internal.NotNull;
 import cse312.demo.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +30,7 @@ public class logRegController {
   }
 
   @PostMapping("/loginform")
-  public boolean userLogin(@Nullable @RequestBody Map<String, String> loginInfo) {
+  public boolean userLogin(@NotNull @RequestBody Map<String, String> loginInfo) {
     if (!userService.validateUser(loginInfo.get("userName"),loginInfo.get("password"))) {
       return false;
     }
