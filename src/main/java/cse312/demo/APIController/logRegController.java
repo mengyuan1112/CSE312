@@ -37,9 +37,6 @@ public class logRegController {
     return true;
   }
 
-
-
-  
   @GetMapping("/")
   public List<User> getAllUser() {
     return userService.getAllUser();
