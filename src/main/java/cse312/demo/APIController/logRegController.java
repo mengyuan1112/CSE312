@@ -34,12 +34,41 @@ public class logRegController {
     if (!userService.validateUser(loginInfo.get("userName"),loginInfo.get("password"))) {
       return false;
     }
+    List<User> allUser = userService.getAllUser();
+    User user = null;
+    for(User person: allUser) {
+      if(person.getUserName() == loginInfo.get("userName")) {
+        user = person;
+        break;
+      }
+    }
+    userService.addOnlineUser(user);
     return true;
   }
 
+  @GetMapping("/onlineuserfresh")
+  public HashMap<Integer, List<User>> userFresher(){
+    HashMap<Integer, List<User>> userList = new HashMap<>();
+    userList.put(userService.getAllOnlineUser().size(), userService.getAllUser());
+    return userList;
+  }
+
+  @PostMapping("/logout")
+  public void logOutUser(@NotNull @RequestBody Map<String, String> logoutInfo){
+    List<User> allUser = userService.getAllUser();
+    User user = null;
+    for(User person: allUser) {
+      if(person.getUserName() == logoutInfo.get("userName")) {
+        user = person;
+        break;
+      }
+    }
+    userService.removeLogoutUser(user);
+  }
+
   @GetMapping("/")
-  public List<User> getAllUser() {
-    return userService.getAllUser();
+  public String getAllUser() {
+    return "this is first page";
   }
 
 }

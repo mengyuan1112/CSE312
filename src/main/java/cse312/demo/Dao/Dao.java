@@ -18,5 +18,11 @@ public interface Dao {
 
   String getPasswordByUserName(String username);
 
+  Map<User, Boolean> getAllOnlineUser();
+
   List<User> getAllUser();
+
+  void removeLogOutUser(User user);
+
+  void addLoginUser(User user);
 }

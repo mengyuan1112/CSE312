@@ -34,7 +34,19 @@ public class UserService{
     return false;
   }
 
-  public List<User> getAllUser() {
+  public Map<User,Boolean> getAllOnlineUser() {
+    return userOperator.getAllOnlineUser();
+  }
+
+  public void addOnlineUser(User user) {
+    userOperator.addLoginUser(user);
+  }
+
+  public void removeLogoutUser(User user) {
+    userOperator.removeLogOutUser(user);
+  }
+
+  public List<User> getAllUser(){
     return userOperator.getAllUser();
   }
 
