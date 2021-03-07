@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import cse312.demo.Model.User;
 
 
-@CrossOrigin(origins = "http://localhost:8080")
+@CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/")
 public class logRegController {
