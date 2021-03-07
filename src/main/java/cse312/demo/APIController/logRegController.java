@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import cse312.demo.Model.User;
 
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://localhost:8080")
 @RestController
 @RequestMapping("/")
 public class logRegController {
@@ -35,30 +35,37 @@ public class logRegController {
       return false;
     }
     List<User> allUser = userService.getAllUser();
-    User user = null;
+    User user;
+    System.out.println("hi");
     for(User person: allUser) {
-      if(person.getUserName() == loginInfo.get("userName")) {
+      if(person.getUserName().equals(loginInfo.get("userName"))) {
         user = person;
+        userService.addOnlineUser(user);
         break;
       }
     }
-    userService.addOnlineUser(user);
     return true;
   }
 
   @GetMapping("/onlineuserfresh")
-  public HashMap<Integer, List<User>> userFresher(){
-    HashMap<Integer, List<User>> userList = new HashMap<>();
-    userList.put(userService.getAllOnlineUser().size(), userService.getAllUser());
+  public HashMap<Integer, Set<User>> userFresher(){
+    HashMap<Integer, Set<User>> userList = new HashMap<>();
+    userList.put(userService.getAllOnlineUser().size(), userService.getAllOnlineUser().keySet());
     return userList;
   }
+
+  @GetMapping("/alluser")
+  public List<User> allUser(){
+    return userService.getAllUser();
+  }
+
 
   @PostMapping("/logout")
   public void logOutUser(@NotNull @RequestBody Map<String, String> logoutInfo){
     List<User> allUser = userService.getAllUser();
     User user = null;
     for(User person: allUser) {
-      if(person.getUserName() == logoutInfo.get("userName")) {
+      if(person.getUserName().equals(logoutInfo.get("userName"))) {
         user = person;
         break;
       }

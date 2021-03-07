@@ -39,7 +39,7 @@ public class UserService{
   }
 
   public void addOnlineUser(User user) {
-    userOperator.addLoginUser(user);
+    userOperator.addOnlineUser(user);
   }
 
   public void removeLogoutUser(User user) {

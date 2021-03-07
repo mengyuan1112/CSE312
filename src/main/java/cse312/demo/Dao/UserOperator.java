@@ -45,7 +45,6 @@ public class UserOperator implements Dao{
   @Override
   public Map<User, Boolean> getAllOnlineUser() {
     return onlineUser;
-
   }
 
   @Override
@@ -54,12 +53,13 @@ public class UserOperator implements Dao{
   }
 
   @Override
-  public void addLoginUser(User user) {
+  public void addOnlineUser(User user) {
     onlineUser.put(user, true);
+    System.out.println(onlineUser);
   }
 
   @Override
   public List<User> getAllUser() {
-    return userDB;
+    return UserDB;
   }
 }

@@ -24,5 +24,5 @@ public interface Dao {
 
   void removeLogOutUser(User user);
 
-  void addLoginUser(User user);
+  void addOnlineUser(User user);
 }
