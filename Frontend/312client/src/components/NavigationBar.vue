@@ -54,7 +54,7 @@ export default {
   },
   methods:{
     updateOnlineUser:function(){
-      const url = "localhost:8080/onlineuserfresh";
+      const url = "http://localhost:8080/onlineuserfresh";
       setInterval(()=>{
         this.axios.get(url).then(res=>{
           this.onlineUser = res;
