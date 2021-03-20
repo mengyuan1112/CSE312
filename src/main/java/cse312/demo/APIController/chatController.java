@@ -11,7 +11,7 @@ import java.net.UnknownHostException;
 
 @RestController
 public class chatController {
-    @GetMapping("/chatroom")
+    @GetMapping("/chat")
     public ModelAndView index(String username, HttpServletRequest request) throws UnknownHostException {
         if(StringUtils.isEmpty(username)){
             username = "Unknown";

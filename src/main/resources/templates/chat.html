@@ -21,7 +21,8 @@
     <div class="footer">
         <input type="text" id="msg">
         <button onclick="sendText()">Send</button>
-        <button onclick="sendImg()" id="file">File</button>
+        <!--        <button onclick="sendImg()" id="file">File</button>-->
+        <input type="file" id="file" onchange="sendImg()">
     </div>
 
 
@@ -41,20 +42,10 @@
             console.log('WebSocket getting message：%c' + event.data, 'color:green');
             var message = JSON.parse(event.data) || {};
             var $messageContainer = $('.user_message');
-            if (message.messageType === 'SPEAKING') {
-                if(message.userName === ''){
-                    $messageContainer.append(
-                        '<div>' + "Unknown User：" + message.message + '</div>');
-                }else{
-                    $messageContainer.append(
-                        '<div>' + message.userName + "：" + message.message + '</div>');
-                }
 
-            }
-
-            if(message.code == 1){
+            if(message.messageType === "text"){
                 $messageContainer.append('<div>' + message.username + "：" + message.message + '</div>');
-            }else if(message.code == 2){
+            }else if(message.messageType === "image"){
                 $messageContainer.append('<div>' + '<img width="150px" src='+message.message+'>' + '</div>');
             }
         };
@@ -81,7 +72,7 @@
         var username = $('#username').text();
         var message = $message.val();
         if ($message.val()) {
-            var obj ={username: username , message: message, type: "image"};
+            var obj ={messageType: "text", username: username , message: message};
             webSocket.send(JSON.stringify(obj));
             $message.val(null);
         }
@@ -89,25 +80,21 @@
     }
 
 
-    /**
-     * 使用ENTER发送消息
-     */
     document.onkeydown = function (event) {
         var e = event || window.event || arguments.callee.caller.arguments[0];
-        e.keyCode === 13 && sendMsgToServer();
+        e.keyCode === 13 && sendText();
     };
 
 
     function sendImg() {
-
         var files = document.querySelector("#file").files
+        var username = $('#username').text();
         if(files.length>0){
             var fileReader = new FileReader();
             fileReader.readAsDataURL(files[0])
             fileReader.onload=function (e) {
-                var s = JSON.stringify({code:2,message:e.target.result});
+                var s = JSON.stringify({messageType: "image", username: username, message:e.target.result});
                 webSocket.send(s)
-
             }
         }
     }

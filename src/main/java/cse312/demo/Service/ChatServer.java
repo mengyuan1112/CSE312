@@ -35,7 +35,7 @@ public class ChatServer {
     @OnMessage
     public void onMessage(Session session, String jsonStr){
         Chat chat = JSON.parseObject(jsonStr,Chat.class);
-        broadCastMessage(Chat.jsonStr(Chat.SPEAKING,chat.getUserName(),chat.getMessage()));
+        broadCastMessage(Chat.jsonStr(chat.getMessageType(),chat.getUsername(),chat.getMessage()));
     }
 
     @OnClose
