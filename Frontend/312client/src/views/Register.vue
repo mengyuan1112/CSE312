@@ -49,7 +49,10 @@ export default {
           alert("userName in use");
           return;
         }
-        alert("registered successfully! Use your username and password to login.")
+        else{
+          alert("registered successfully! Use your username and password to login.")
+          this.$router.push("/login");
+        }
       })
     }
   },

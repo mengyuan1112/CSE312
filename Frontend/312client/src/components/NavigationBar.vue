@@ -1,6 +1,6 @@
 <template>
 
-  <div id = "NavigationBarDiv"  @click = "seemember" >
+  <div id = "NavigationBarDiv"  @click = "updateOnlineUser"  >
       <a-menu  mode = "horizontal" trigger='["click"]'>
         <a-sub-menu trigger="['click']">
           <span slot="title">Friend List</span>
@@ -9,7 +9,7 @@
 <!--            <a href="javascript:;" >Online Users</a>-->
 
 <!--            <a-menu-item v-for ="(member,index) in $store.state.onlineMembers" :key ="index" >-->
-            <a-menu-item v-for = "(member,index) in onlineName" :key = "index" @click = "seemember">
+            <a-menu-item v-for = "(member,index) in onlineName" :key = "index" >
               <p>{{member}}</p>
             </a-menu-item>
 <!--            <a-menu-item>-->
@@ -32,22 +32,7 @@ export default {
   name: "NavigationBar",
   data(){
     return{
-      onlineUser:{
-        "2": [
-          {
-            "personName": "qwe1",
-            "userName": "qwe1",
-            "password": "qwe1",
-            "gender": null
-          },
-          {
-            "personName": "qwe",
-            "userName": "qwe",
-            "password": "qwe",
-            "gender": null
-          }
-        ]
-      },
+      onlineUser:{},
       onlineNumber: 0,
       onlineName:[],
     }
@@ -57,14 +42,16 @@ export default {
       const url = "http://localhost:8080/onlineuserfresh";
       setInterval(()=>{
         this.axios.get(url).then(res=>{
-          this.onlineUser = res;
+          this.onlineUser = res.data;
+          // console.log(this.onlineUser);
           this.onlineNumber = Object.keys(this.onlineUser)[0];
+          this.onlineName = [];
           for (let i in Object.values(this.onlineUser)[0]){
             this.onlineName.push(Object.values(this.onlineUser)[0][i].personName);
           }
-          console.log(res);
+          // console.log(res.data);
         })
-      },2000)
+      },1000)
     },
 
 

@@ -1,5 +1,5 @@
 <template>
-  <div id="Home">
+  <div id="Home" @click ="checklogin">
     <NavigationBar/>
     <Functionality/>
     <!--    <HelloWorld msg="Welcome to Your Vue.js App"/>-->
@@ -13,10 +13,26 @@ import NavigationBar from "@/components/NavigationBar";
 import Functionality from "@/components/Functionality";
 export default {
   name: 'Home',
+  data(){
+    return{
+      username:"",
+    }
+  },
+  methods:{
+    checklogin:function(){
+      if(this.$store.state.loginStatus === false){
+        alert("please log in before continuing ");
+        this.$router.push('/login');
+      }
+    }
+  },
   components: {
     // HelloWorld,
     NavigationBar,
     Functionality,
+  },
+  created(){
+    this.username = this.$store.state.username;
   }
 }
 </script>
