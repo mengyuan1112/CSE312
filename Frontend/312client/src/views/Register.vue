@@ -6,15 +6,12 @@
     <input type="text" v-model="accountName"><br>
 <!--    <button class = "blueunderline" >Check Account Name</button><br><br>-->
 
-    <label for="userName">Email:</label><br>
+    <label for="userName">Username:</label><br>
     <input type="text" id="userName" v-model = "userName"><br><br>
 
     <label for="password">Password:</label><br>
     <input type="password" id="password" v-model = "password"><br>
     <p v-show = "validPassword">Invalid password</p>
-    <label for="male">Male</label>
-    <input type="radio" name="sex" value="male" id = 'male'>
-    <input type="radio" name="sex" value="female">Female <br>
 
     <button type = "button" :disabled ="validPassword" @click = "submitRegister" >Register!</button>
     <br>
@@ -52,7 +49,10 @@ export default {
           alert("userName in use");
           return;
         }
-        alert("registered successfully! Use your username and password to login.")
+        else{
+          alert("registered successfully! Use your username and password to login.")
+          this.$router.push("/login");
+        }
       })
     }
   },
