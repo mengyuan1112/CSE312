@@ -12,7 +12,7 @@ Backend Spring boot:
 $ mvn clean -DskipTests
 $ java -jar target/demo-0.0.1-SNAPSHOT.jar
 ```
-go to Frontend package
+cd intoto Frontend/312client
 
 ```bash
 $ yarn install
