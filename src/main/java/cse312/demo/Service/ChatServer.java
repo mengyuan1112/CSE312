@@ -2,6 +2,7 @@ package cse312.demo.Service;
 
 import com.alibaba.fastjson.JSON;
 import cse312.demo.Model.Chat;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
@@ -9,7 +10,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Slf4j
 @Component
 @ServerEndpoint("/chat")
 public class ChatServer {
@@ -34,7 +35,7 @@ public class ChatServer {
     @OnMessage
     public void onMessage(Session session, String jsonStr){
         Chat chat = JSON.parseObject(jsonStr,Chat.class);
-        broadCastMessage(Chat.jsonStr(Chat.SPEAKING,chat.getUserName(),chat.getMessage()));
+        broadCastMessage(Chat.jsonStr(chat.getMessageType(),chat.getUsername(),chat.getMessage()));
     }
 
     @OnClose

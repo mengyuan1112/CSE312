@@ -1,23 +1,23 @@
 package cse312.demo.Model;
 import com.alibaba.fastjson.JSON;
 
-public class Chat {
+public class    Chat {
     public static final String JOIN = "JOIN";
     public static final String SPEAKING = "SPEAKING";
     public static final String LEAVE = "LEAVE";
 
-    private String userName;
+    private String username;
     private String message;
     private String messageType;
 
-    public static String jsonStr(String messageType, String userName, String message) {
-        return JSON.toJSONString(new Chat(messageType, userName, message));
+    public static String jsonStr(String messageType, String username, String message) {
+        return JSON.toJSONString(new Chat(messageType, username, message));
     }
 
 
-    public Chat(String messageType, String userName, String message) {
+    public Chat(String messageType, String username, String message) {
         this.messageType = messageType;
-        this.userName = userName;
+        this.username = username;
         this.message = message;
     }
 
@@ -34,12 +34,12 @@ public class Chat {
         return LEAVE;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getMessage() {
