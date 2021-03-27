@@ -23,12 +23,27 @@
 
 
 <script>
+import axios from "axios"
 export default {
   name: "Functionality",
-  methods:{
-    alertLogout:()=>{
-      alert("You have been logged out successfully");
+  data(){
+    return{
+      username:"",
     }
+  },
+  methods:{
+    alertLogout:function(){
+      const url = "http://localhost:8080/logout";
+      axios.post(url,{userName:this.username})
+      this.$store.commit("loginFalse");
+      this.$store.commit("clearUsername")
+      this.username = this.$store.state.username;
+      // alert("You have been logged out successfully");
+      this.$router.push('/login').catch(()=>{});
+    }
+  },
+  created(){
+    this.username = this.$store.state.username;
   }
 }
 </script>

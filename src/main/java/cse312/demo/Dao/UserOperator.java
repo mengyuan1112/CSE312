@@ -12,6 +12,7 @@ public class UserOperator implements Dao{
 
   public static List<User> UserDB = new ArrayList<>();
   public static Map<String,String> UserInfoDB = new HashMap<>();
+  public static Map<User, Boolean> onlineUser = new HashMap<>();
 
   @Override
   public void insertUser(User user) {
@@ -42,10 +43,23 @@ public class UserOperator implements Dao{
   }
 
   @Override
-  public List<User> getAllUser() {
-    return UserDB;
-
+  public Map<User, Boolean> getAllOnlineUser() {
+    return onlineUser;
   }
 
+  @Override
+  public void removeLogOutUser(User user) {
+    onlineUser.remove(user);
+  }
 
+  @Override
+  public void addOnlineUser(User user) {
+    onlineUser.put(user, true);
+    System.out.println(onlineUser);
+  }
+
+  @Override
+  public List<User> getAllUser() {
+    return UserDB;
+  }
 }
