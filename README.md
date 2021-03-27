@@ -19,3 +19,6 @@ $ yarn install
 $ yarn serve
 ```
 when everything done: localhost:8081/login
+
+
+### Note that the dockerfile is not functional at this point
