@@ -15,6 +15,7 @@ $ java -jar target/demo-0.0.1-SNAPSHOT.jar
 go to Frontend package
 
 ```bash
+$ yarn install
 $ yarn serve
 ```
 when everything done: localhost:8081/login
