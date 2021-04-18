@@ -10,8 +10,9 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     // onlineMembers:["membwwwwwwwwwwwwwssssssssssssssssssswwwer1","member2","member1","member2","member1","member2","member1","member2",],
-    username:"",
-    loginStatus:false,
+    username:null,
+    loginStatus:true,
+    chatWith:null,
   },
   mutations: {
     updateusername(state,payload){
@@ -19,13 +20,26 @@ export default new Vuex.Store({
       console.log(payload);
     },
     clearUsername(state){
-      state.username="";
+      state.username=null;
     },
     loginTrue(state){
       state.loginStatus = true;
     },
     loginFalse(state){
       state.loginStatus = false;
+    },
+    startChat(state,payload){
+      state.chatWith = payload;
+      // const url = ""
+      // this.$axios.post(url,{from:state.username,to:state.chatWith}).then(res=>{
+      //   if(res === true){
+      //     console.log("start chat");
+      //   }
+      // })
+    },
+    endChat(state){
+      state.chatWith = null;
+
     }
   },
   actions: {

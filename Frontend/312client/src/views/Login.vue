@@ -1,17 +1,24 @@
 <template>
-<div v-if="!logStatus">
+<div >
+
+  <h1 style="font-size: 150%;">Login Page</h1>
     <label label = "userName">Username: </label><br>
-    <input type="text" v-model = "userName"><br>
+  <a-input class="inputsize" type="text" v-model = "userName"></a-input><br><br>
     <label for="password">Password: </label><br>
-    <input type="password" id="password" v-model = "accountPassword"><br>
-    <button type="submit" @click = "submitLogin">Login</button>
+  <a-input class="inputsize" type="password" id="password" v-model = "password"></a-input><br><br>
+    <div v-if="canSubmit === true" >
+      <a-button type="submit" @click = "submitLogin">Login</a-button>
+    </div>
+    <div v-else>
+      <a-button disabled >Login</a-button>
+    </div>
     <br>
     <router-link to="/register">I do not have an account, register Now!</router-link>
 </div>
-  <div v-else>
-    <h1> You are Logged in already</h1>
-    <router-link to="/">Click me to go back</router-link>
-  </div>
+<!--  <div v-else>-->
+<!--    <h1> You are Logged in already</h1>-->
+<!--    <router-link to="/">Click me to go back</router-link>-->
+<!--  </div>-->
 </template>
 
 <script>
@@ -20,14 +27,14 @@ export default {
   data(){
     return{
       userName:"",
-      accountPassword:"",
+      password:"",
       logStatus :"",
     }
   },
   methods:{
     submitLogin(){
       const url = "http://localhost:8080/loginform";
-      this.axios.post(url,{userName:this.userName,password:this.accountPassword}).then(res=>{
+      this.axios.post(url,{userName:this.userName,password:this.password}).then(res=>{
         if(res.data == false){
           alert("Incorrect username or password");
         }
@@ -39,15 +46,28 @@ export default {
         }
       })
     }
-
+  },
+  computed:{
+    canSubmit(){
+      if(this.userName != "" && this.password != ""){
+        return true;
+      }
+      return false;
+    }
   },
   created() {
     this.logStatus = this.$store.state.loginStatus;
+    if(this.$store.state.loginStatus === true){
+      alert("You are logged in already");
+      this.$router.push('/');
+    }
   }
 
 }
 </script>
 
 <style scoped>
-
+.inputsize{
+  width:400px !important;
+}
 </style>

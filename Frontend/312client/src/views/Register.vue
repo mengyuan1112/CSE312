@@ -1,21 +1,28 @@
 /* eslint-disable */
 <template>
 <div>
-  <form action="">
-    <label >Account Name:</label><br>
-    <input type="text" v-model="accountName"><br>
+  <h1 style="font-size: 150%;">Register Page</h1>
+
+<!--    <label >Account Name:</label><br>-->
+<!--    <a-input type="text" v-model="accountName"></a-input><br><br>-->
 <!--    <button class = "blueunderline" >Check Account Name</button><br><br>-->
 
     <label for="userName">Username:</label><br>
-    <input type="text" id="userName" v-model = "userName"><br><br>
-
+    <a-input class="inputsize" type="text" id="userName" v-model = "userName"></a-input><br><br>
     <label for="password">Password:</label><br>
-    <input type="password" id="password" v-model = "password"><br>
-    <p v-show = "validPassword">Invalid password</p>
+    <a-input class="inputsize" type="password" id="password" v-model = "password"></a-input><br><br>
+    <p v-show = "validPassword">Password must be less than 15 characters</p>
+    <label for="repassword">Check Password:</label><br>
+    <a-input class="inputsize" type="password" id="repassword" v-model = "repassword"></a-input><br><br>
+    <p v-show = "checkPassword">Password you enter is not the same</p>
 
-    <button type = "button" :disabled ="validPassword" @click = "submitRegister" >Register!</button>
+  <div v-if="canSubmit === true" >
+      <a-button type="submit" @click = "submitRegister">Register Now</a-button>
+    </div>
+    <div v-else>
+      <a-button disabled >Register Now</a-button>
+    </div>
     <br>
-  </form>
   <router-link to="/login">I have an account, login now</router-link>
 </div>
 </template>
@@ -29,19 +36,10 @@ export default {
       accountName:"", // accountName == personName in java
       userName:"",
       password:"",
+      repassword:"",
     }
   },
   methods:{
-    // checkAccountName:()=> {
-    //   const pattern = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-    //   // var realEmail = /^[\w\-\.]+@[a-z0-9]+(\-[a-z0-9]+)?(\.[a-z0-9]+(\-[a-z0-9]+)?)*\.[a-z]{2,4}$/i;
-    //   var isOk = pattern.test(this.accountName);
-    //   if (isOk == false) {
-    //     alert("Please Enter Correct Email!");
-    //     this.accountName.focus();
-    //   }
-    //   return isOk;
-    // }
     submitRegister(){
       const url = "http://localhost:8080/registerform";
       this.axios.post(url,{personName:this.accountName,userName:this.userName,password:this.password}).then(res=>{
@@ -56,19 +54,37 @@ export default {
       })
     }
   },
-  computed:{
-    validPassword(){
-      if(!this.accountName)return false;
-      if(!this.userName)return false;
-      if(this.password.length<=12){
+  computed: {
+    canSubmit() {
+      if (this.userName === "" || this.password === "") {
+        return false;
+      }
+      if (this.password.length >= 15) {
+        return false;
+      }
+      if (this.password != this.repassword) {
+        return false
+      }
+      return true;
+    },
+    validPassword() {
+      if (this.password.length <= 15) {
         return false;
       }
       return true;
+    },
+    checkPassword() {
+      if (this.password != this.repassword) {
+        return true
+      }
+      return false;
     }
   }
 }
 </script>
 
 <style scoped>
-
+.inputsize{
+  width:400px !important;
+}
 </style>
