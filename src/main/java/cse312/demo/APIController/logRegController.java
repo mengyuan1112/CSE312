@@ -29,6 +29,7 @@ public class logRegController {
   public boolean userRegister(@RequestBody User user) {
     if(userService.checkUser(user.getUserName())) return false;
     userService.insertUser(user);
+    userService.addOnlineUser(user);
 //    userRepository.insert(user);
     return true;
   }
