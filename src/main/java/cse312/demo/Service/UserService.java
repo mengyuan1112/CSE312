@@ -1,6 +1,7 @@
 package cse312.demo.Service;
 
 import cse312.demo.Dao.UserOperator;
+import cse312.demo.Dao.UserRepository;
 import cse312.demo.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,44 +11,61 @@ import java.util.*;
 
 @Service
 public class UserService{
-  final UserOperator userOperator;
-
+  final UserRepository userRepository;
+  static List<User> onlineUser;
   @Autowired
-  public UserService(@Qualifier("User") UserOperator userOperator) {
-    this.userOperator = userOperator;
+  public UserService(UserRepository userRepository) {
+    this.userRepository = userRepository;
+    this.onlineUser = new ArrayList<>();
   }
-
 
   public boolean insertUser(User user) {
     if(this.checkUser(user.getUserName())) return false;
-    this.userOperator.insertUser(user);
+    userRepository.save(user);
     return true;
   }
 
-
   public boolean checkUser(String username) {
-    return this.userOperator.checkUserName(username);
-  }
-
-  public boolean validateUser(String username, String password) {
-    if(checkUser(username) && userOperator.getPasswordByUserName(username).equals(password)) return true;
+    List<User> userDB = userRepository.findAll();
+    for(User user: userDB) {
+      System.out.println(user.getUserName());
+      if(user.getUserName().equals(username)) return true;
+    }
     return false;
   }
 
-  public Map<User,Boolean> getAllOnlineUser() {
-    return userOperator.getAllOnlineUser();
+  public boolean validateUser(String username, String password) {
+    List<User> userDB = userRepository.findAll();
+    System.out.println(userDB.size());
+    for(User user: userDB) {
+      if(user.getUserName().equals(username) && user.getPassword().equals(password)) return true;
+    }
+    return false;
+  }
+
+  public List<User> getAllOnlineUser() {
+    return onlineUser;
   }
 
   public void addOnlineUser(User user) {
-    userOperator.addOnlineUser(user);
+    onlineUser.add(user);
   }
 
-  public void removeLogoutUser(User user) {
-    userOperator.removeLogOutUser(user);
+  public void removeLogoutUser(String username) {
+    User user = userRepository.findByUserName(username);
+    onlineUser.remove(user);
   }
 
   public List<User> getAllUser(){
-    return userOperator.getAllUser();
+    return userRepository.findAll();
+  }
+
+  public boolean updateProfile(String username, String password) {
+    User user = userRepository.findByUserName(username);
+    if(user == null) return false;
+    user.setPassword(password);
+    userRepository.save(user);
+    return true;
   }
 
 }
