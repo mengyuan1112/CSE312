@@ -9,9 +9,24 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    onlineMembers:["membwwwwwwwwwwwwwssssssssssssssssssswwwer1","member2","member1","member2","member1","member2","member1","member2",],
+    // onlineMembers:["membwwwwwwwwwwwwwssssssssssssssssssswwwer1","member2","member1","member2","member1","member2","member1","member2",],
+    username:"",
+    loginStatus:false,
   },
   mutations: {
+    updateusername(state,payload){
+      state.username = payload;
+      console.log(payload);
+    },
+    clearUsername(state){
+      state.username="";
+    },
+    loginTrue(state){
+      state.loginStatus = true;
+    },
+    loginFalse(state){
+      state.loginStatus = false;
+    }
   },
   actions: {
   },
