@@ -11,7 +11,7 @@ export default new Vuex.Store({
   state: {
     // onlineMembers:["membwwwwwwwwwwwwwssssssssssssssssssswwwer1","member2","member1","member2","member1","member2","member1","member2",],
     username:null,
-    loginStatus:true,
+    loginStatus:false,
     chatWith:null,
   },
   mutations: {
