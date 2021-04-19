@@ -1,23 +1,34 @@
 package cse312.demo.Model;
 import com.alibaba.fastjson.JSON;
 
-public class    Chat {
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+@Document(collection = "message")
+
+public class Chat {
     public static final String JOIN = "JOIN";
     public static final String SPEAKING = "SPEAKING";
     public static final String LEAVE = "LEAVE";
 
-    private String username;
+    @Id
+    private String fromUsername;
+    private String toUsername;
+
     private String message;
     private String messageType;
 
-    public static String jsonStr(String messageType, String username, String message) {
-        return JSON.toJSONString(new Chat(messageType, username, message));
+    public static String jsonStr(String messageType, String fromUsername, String toUsername, String message) {
+        return JSON.toJSONString(new Chat(messageType, fromUsername, toUsername, message));
     }
 
 
-    public Chat(String messageType, String username, String message) {
+    public Chat(String messageType, String fromUsername, String toUsername, String message) {
         this.messageType = messageType;
-        this.username = username;
+        this.fromUsername = fromUsername;
+        this.toUsername = toUsername;
         this.message = message;
     }
 
@@ -34,12 +45,20 @@ public class    Chat {
         return LEAVE;
     }
 
-    public String getUsername() {
-        return username;
+    public String getFromUsername() {
+        return fromUsername;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setFromUsername(String fromUsername) {
+        this.fromUsername = fromUsername;
+    }
+
+    public String getToUsername() {
+        return toUsername;
+    }
+
+    public void setToUsername(String toUsername) {
+        this.toUsername = toUsername;
     }
 
     public String getMessage() {
