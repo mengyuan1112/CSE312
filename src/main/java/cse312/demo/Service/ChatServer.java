@@ -20,7 +20,7 @@ import java.util.Map;
 @ServerEndpoint("/chat/{username}")
 public class ChatServer {
     @Autowired
-    private ChatDao chatdao;
+//     private ChatDao chatdao;
 
     private static Map<String, Session> onlineSession = new HashMap<>();
 
