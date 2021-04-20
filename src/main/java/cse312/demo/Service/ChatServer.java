@@ -1,7 +1,7 @@
 package cse312.demo.Service;
 
 import com.alibaba.fastjson.JSON;
-import cse312.demo.Dao.ChatDao;
+// import cse312.demo.Dao.ChatDao;
 import cse312.demo.Model.Chat;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.Map;
 @ServerEndpoint("/chat/{username}")
 public class ChatServer {
     @Autowired
-    private ChatDao chatdao;
+//     private ChatDao chatdao;
 
     private static Map<String, Session> onlineSession = new HashMap<>();
 
