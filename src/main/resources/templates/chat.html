@@ -19,6 +19,7 @@
         <div class="user_message"></div>
     </div>
     <div class="footer">
+        <input type="text" id="tomsg">
         <input type="text" id="msg">
         <button onclick="sendText()">Send</button>
         <!--        <button onclick="sendImg()" id="file">File</button>-->
@@ -32,7 +33,7 @@
 
     function getWebSocket() {
 
-        var webSocket = new WebSocket('ws://localhost:8080/chat');
+        var webSocket = new WebSocket('ws://localhost:8080/chat/' + $('#username').text());
 
         webSocket.onopen = function (event) {
             console.log('WebSocket Connected');
@@ -44,7 +45,11 @@
             var $messageContainer = $('.user_message');
 
             if(message.messageType === "text"){
-                $messageContainer.append('<div>' + message.username + "：" + message.message + '</div>');
+                if(message.toUsername === "All"){
+                    $messageContainer.append('<div>' + "User：" + message.fromUsername + " " + message.message + '</div>');
+                }else{
+                    $messageContainer.append('<div>' + message.fromUsername + "：" + message.message + '</div>');
+                }
             }else if(message.messageType === "image"){
                 $messageContainer.append('<div>' + '<img width="150px" src='+message.message+'>' + '</div>');
             }
@@ -70,9 +75,14 @@
     function sendText() {
         var $message = $('#msg');
         var username = $('#username').text();
+        // var tousername = $('#tomsg').text();
+        var tousername = document.getElementById("tomsg").value;
+        console.log('sending from: ' + username)
+        console.log('sending to: ' + tousername)
         var message = $message.val();
         if ($message.val()) {
-            var obj ={messageType: "text", username: username , message: message};
+            var obj ={messageType: "text", fromUsername: username, toUsername: tousername , message: message};
+            console.log(obj);
             webSocket.send(JSON.stringify(obj));
             $message.val(null);
         }
@@ -89,11 +99,12 @@
     function sendImg() {
         var files = document.querySelector("#file").files
         var username = $('#username').text();
+        var tousername = document.getElementById("tomsg").value;
         if(files.length>0){
             var fileReader = new FileReader();
             fileReader.readAsDataURL(files[0])
             fileReader.onload=function (e) {
-                var s = JSON.stringify({messageType: "image", username: username, message:e.target.result});
+                var s = JSON.stringify({messageType: "image", fromUsername: username, toUsername: tousername, message:e.target.result});
                 webSocket.send(s)
             }
         }
