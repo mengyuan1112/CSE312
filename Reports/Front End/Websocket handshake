@@ -1,0 +1,16 @@
+Websocket(Frontend):
+
+Websocket client applications use the WebSocket API to communicate with the server using the WebSocket protocol
+In the WebSocket API, the browser and the server only need to do a handshake action, and then a fast channel
+ is formed between the browser and the server. Data can be transferred directly between the two.
+The browser sends a request to establish a WebSocket connection to the server through JavaScript.
+After the connection is established, the client and server can directly exchange data through the TCP connection.
+After the Web Socket connection, the user can send data to the server through the send() method,
+and receive the data returned by the server through the onmessage event.
+The link below explains the whole process of how websocket handshake works and the code looks like.
+	-Creating a websocket object
+	-Sending data to the server
+	-Receiving message from the server and interpret JSON object
+	-Close connection
+
+https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications

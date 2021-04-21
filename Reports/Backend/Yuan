@@ -1,0 +1,45 @@
+Yuan Meng -Spring Frame work report
+
+  In our backend part, we designed in DAO (Data Access Object) pattern which isolates and separates layers by business and object.
+And Spring framework will support annotation and maven dependency for us to quickly build service, controller and configuration etc.
+  1. Interface/Model: During the project, we start with an interface about user operators by annotation Repository on it,
+     In order to make this class is linked with service annotation, we make Repository(...) annotation then put his into
+     container that make sure service annotation could found it and use it.
+
+  2. DataBase setting: In the Spring, we put information in the application.properties, it will help us figure out which port and connection
+     do we use, and then we make some DB syntax for the service to operator DB.
+
+  3. Business Service/Function call: Set annotation "service" for the Userservice class which relate to the User Repository
+     then it is able to automatically pair with DB without create something, use autowire annotation with it, it will auto
+     build object db for us.The purpose of this class is to help connect the Data, Model with Restful API.
+     we use service class to call the method or data from the original, it will help us to change the requirements and maintain the structure in the future.
+
+  4. HTTP Request/Response:  Last step we set up the annotation “Restcontroller” then in the class we define the User Service which
+     I mention the before it will automatically pair the instance User service in which we could call the User Service class’ function to access the data from User or temp database.
+
+  Following the RESTful API annotation: we are using annotation “@RequestMapping” by (“/”) to receive the root path and annotation “@CrossOrigin”
+  to allow Vue’s localhost to send requests to our server. And then in the server.
+
+  In the PostMapping/GetMapping(path) annotation, they will receive the data is Json Application header type, following the Library usage
+  "https://github.com/spring-projects/spring-framework/blob/master/spring-web/src/main/java/org/springframework/http/server/ServletServerHttpRequest.java"
+  it will use two function getHeaders and getBodyFromServletRequestParameters.
+
+  In getHeader function it is override function, it use API get header to direct get request header and by using getContentType API
+  to know what content type in the request and then use getContentLength API to get contentLength. After get everything it will return
+  entire header.
+
+  In getBodyFromServletRequestParameters function it is also override function. It receive 1024 byte into the byte array
+  and use nest for loop to interator request body for eveytime and return entire body
+
+  In Response Function:
+  getHeader API could direct get header from library by HttpHeader.readOnlyHeaders.
+  getBody is using the same API as header but just using getOutputStream it will contains body
+  writeheader function it put serverlentResponse content type into the writer, and use Encode function to encode body in the response
+  last he put contentLength by using getHeaders.getcontentLength and set it into the writer..
+
+  Reference from the Spring for Post/Get Request and Response:
+  Request: https://github.com/spring-projects/spring-framework/blob/master/spring-web/src/main/java/org/springframework/http/server/ServletServerHttpRequest.java
+
+  Response: https://github.com/spring-projects/spring-framework/blob/master/spring-web/src/main/java/org/springframework/http/server/ServletServerHttpResponse.java
+
+

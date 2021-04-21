@@ -1,29 +1,16 @@
 <template>
 
   <div id = "NavigationBarDiv"  @click = "updateOnlineUser"  >
-      <a-menu  mode = "horizontal" trigger='["click"]'>
-        <a-sub-menu trigger="['click']">
-          <span slot="title">Friend List</span>
-
-          <a-menu-item-group title = "Online Users" class = "menuScroll" >
-<!--            <a href="javascript:;" >Online Users</a>-->
-
-<!--            <a-menu-item v-for ="(member,index) in $store.state.onlineMembers" :key ="index" >-->
+    Online Users:{{onlineNumber}}
+    <br>
+    <p >Me: {{userName}}</p>
+    <hr>
+      <a-menu  mode = "vertical" trigger='["click"]'>
             <a-menu-item v-for = "(member,index) in onlineName" :key = "index" >
-              <p>{{member}}</p>
+              <p @click="chatMember(member)">{{member}}</p>
             </a-menu-item>
-<!--            <a-menu-item>-->
-<!--              <a href="javascript:;">Some User</a>-->
-<!--            </a-menu-item>-->
-          </a-menu-item-group>
-        </a-sub-menu>
-        <a-menu-item>
-          <router-link to="/posts">
-            <a> Posts </a>
-          </router-link>
-        </a-menu-item>
       </a-menu>
-    {{onlineNumber}}
+
   </div>
 </template>
 
@@ -35,6 +22,7 @@ export default {
       onlineUser:{},
       onlineNumber: 0,
       onlineName:[],
+      userName:"",
     }
   },
   methods:{
@@ -43,36 +31,34 @@ export default {
       setInterval(()=>{
         this.axios.get(url).then(res=>{
           this.onlineUser = res.data;
-          // console.log(this.onlineUser);
           this.onlineNumber = Object.keys(this.onlineUser)[0];
           this.onlineName = [];
           for (let i in Object.values(this.onlineUser)[0]){
-            this.onlineName.push(Object.values(this.onlineUser)[0][i].personName);
+            if (this.userName != Object.values(this.onlineUser)[0][i].userName )this.onlineName.push(Object.values(this.onlineUser)[0][i].userName);
           }
-          // console.log(res.data);
         })
       },1000)
     },
-
-
-    // seemember:function(){
-    //   console.log(Object.keys(this.onlineUser)[0]);
-    //
-    //   console.log(Object.values(this.onlineUser)[0][0].personName);
-    // }
+    chatMember:function(member){
+      this.$store.commit("startChat",member)
+      console.log(member);
+    }
+  },
+  computed:{
   },
   created() {
     this.updateOnlineUser();
+    this.userName = this.$store.state.username
   }
 }
 </script>
 
 <style scoped>
-#NavigationBarDiv{
-  text-align: left;
-  padding-left:25%;
+/*#NavigationBarDiv{*/
+/*  text-align: left;*/
+/*  padding-left:25%;*/
 
-}
+/*}*/
 
 /*#NavigationBar{*/
 /*  font-size:20px;*/
