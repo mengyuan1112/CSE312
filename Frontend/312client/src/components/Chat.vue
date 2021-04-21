@@ -37,7 +37,7 @@ name: "Chat",
   },
   methods: {
     getWebSocket: function () {
-      this.webSocket = new WebSocket('ws://localhost:8080/chat');
+      this.webSocket = new WebSocket('ws://localhost:8080/chat/' + this.$store.state.username);
       this.webSocket.onopen = function () {
         console.log('WebSocket Connected');
       };
@@ -55,7 +55,7 @@ name: "Chat",
       const message = this.msg;
 
       if (message) {
-        const obj = {messageType: "text", username1:this.$store.state.username, username2: this.$store.state.chatWith, message: message};
+        const obj = {messageType: "text", fromUsername:this.$store.state.username, toUsername: this.$store.state.chatWith, message: message};
         this.webSocket.send(JSON.stringify(obj));
         this.msg = "";
       }
@@ -64,12 +64,12 @@ name: "Chat",
     sendImg:function() {
       const files = document.querySelector("#file").files
       if(files.length>0){
-        let s;
+        var s;
         const username = this.username;
         var fileReader = new FileReader();
         fileReader.readAsDataURL(files[0])
         fileReader.onload=function (e) {
-          s =  JSON.stringify({messageType: "image", username: username, message:e.target.result});
+          s =  JSON.stringify({messageType: "image", fromUsername: username, message:e.target.result});
           // console.log(e.target.result)
         }
         this.webSocket.send(s)
@@ -86,7 +86,9 @@ name: "Chat",
         this.messageContent.push(message.message);
       } else if (message.messageType === "image") {
         this.messageContent.push(message.message);
-      // $messageContainer.append('<div>' + '<img width="150px" src=' + message.message + '>' + '</div>');
+        // this.messageContent.push('<div>' + '<img width="150px" src=' + message.message + '>' + '</div>');
+
+        // $messageContainer.append('<div>' + '<img width="150px" src=' + message.message + '>' + '</div>');
       console.log("received image");
 
       }
