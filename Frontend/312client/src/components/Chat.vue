@@ -25,15 +25,19 @@
 <script>
 
 export default {
-name: "Chat",
+  name: "Chat",
   data(){
-  return{
-    msg:"",
-    webSocket:null,
-    messageContent:[12,1,2],
-    img:"",
-    username:null,
-  }
+    return{
+      msg:"",
+      webSocket:null,
+      messageContent:[12,1,2],
+      img:"",
+      username:null,
+    }
+  },
+  created() {
+    this.getWebSocket();
+    this.username = this.$store.state.username;
   },
   methods: {
     getWebSocket: function () {
@@ -45,37 +49,10 @@ name: "Chat",
       this.webSocket.onclose = function () {
         console.log('WebSocket Connection Closed');
       };
-     this.webSocket.onerror = function () {
+      this.webSocket.onerror = function () {
         console.log('WebSocket Error Occur');
 
       };
-    },
-
-    sendText: function () {
-      const message = this.msg;
-
-      if (message) {
-        const obj = {messageType: "text", fromUsername:this.$store.state.username, toUsername: this.$store.state.chatWith, message: message};
-        this.webSocket.send(JSON.stringify(obj));
-        this.msg = "";
-      }
-    },
-
-    sendImg:function() {
-      const files = document.querySelector("#file").files
-      if(files.length>0){
-        var s;
-        const username = this.username;
-        var fileReader = new FileReader();
-        fileReader.readAsDataURL(files[0])
-        fileReader.onload=function (e) {
-          s =  JSON.stringify({messageType: "image", fromUsername: username, message:e.target.result});
-          // console.log(e.target.result)
-        }
-        this.webSocket.send(s)
-
-      }
-      // console.log("hi img");
     },
 
     websocketOnMessage: function (event) {
@@ -85,22 +62,55 @@ name: "Chat",
         console.log("text");
         this.messageContent.push(message.message);
       } else if (message.messageType === "image") {
-        this.messageContent.push(message.message);
-        // this.messageContent.push('<div>' + '<img width="150px" src=' + message.message + '>' + '</div>');
-
+        // this.messageContent.push(message.message);
+        // <img src="'data:image/png;base64,'+userInfo.imgStr"/>
+        // this.messageContent.push('<img src="' + message.message + '"/>');
+        this.messageContent.push("<img :src=\"" + message.message + "\">");
         // $messageContainer.append('<div>' + '<img width="150px" src=' + message.message + '>' + '</div>');
-      console.log("received image");
+        console.log("received image");
 
       }
 
     },
 
-  },
+    sendImg: function() {
+      const files = document.querySelector("#file").files
+      if(files.length>0){
+        const username = this.username;
+        var fileReader = new FileReader();
+        fileReader.readAsDataURL(files[0])
+        var tmp;
+        fileReader.onload = e => {
+
+          tmp = {messageType: "image", fromUsername: username,message:e.target.result};
+          this.webSocket.send(JSON.stringify(tmp));
+          // console.log(tmp)
+        };
+
+        // fileReader.onload = function(e) {
+        //   var str = fileReader.result;
+        //   var urlDecoded = decodeURIComponent(str);
+        //   this.img = urlDecoded;
+        // }
+
+        // console.log(tmp)
+        // this.webSocket.send(JSON.stringify(s));
+
+      }
+    },
+
+    sendText: function() {
+      const message = this.msg;
+
+      if (message) {
+        const obj = {messageType: "text", fromUsername:this.$store.state.username, toUsername: this.$store.state.chatWith, message: message};
+        this.webSocket.send(JSON.stringify(obj));
+        this.msg = "";
+      }
+    }
 
 
-  created() {
-    this.getWebSocket();
-    this.username = this.$store.state.username;
+
   }
 }
 </script>
