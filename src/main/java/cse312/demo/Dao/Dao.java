@@ -1,5 +1,6 @@
 package cse312.demo.Dao;
 
+import cse312.demo.Model.Chat;
 import cse312.demo.Model.User;
 import java.util.*;
 
@@ -25,4 +26,7 @@ public interface Dao {
   void removeLogOutUser(User user);
 
   void addOnlineUser(User user);
+
+  void insertChat(Chat chat);
+
 }
