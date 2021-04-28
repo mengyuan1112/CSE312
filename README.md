@@ -7,4 +7,4 @@ Run: docker-compose up
 when everything done: localhost:8081
 
 
-### Note that the dockerfile is not functional at this point
+
