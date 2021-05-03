@@ -9,11 +9,11 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Document(collection = "message")
 
 public class Chat {
-    public static final String JOIN = "JOIN";
+    public static final String JOIN = "is online now";
     public static final String SPEAKING = "SPEAKING";
-    public static final String LEAVE = "LEAVE";
+    public static final String LEAVE = "is offline now";
 
-    @Id
+//    @Id
     private String fromUsername;
     private String toUsername;
 
