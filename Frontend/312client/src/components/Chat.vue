@@ -7,7 +7,7 @@
     </div>
     <div class="body">
       <div class="user_message" v-for="(message,index) in messageContent" :key="index">
-        {{message}}
+        <div v-html="message"></div>
       </div>
     </div>
     <div class="footer">
@@ -30,7 +30,7 @@ export default {
     return{
       msg:"",
       webSocket:null,
-      messageContent:[12,1,2],
+      messageContent:[],
       img:"",
       username:null,
     }
@@ -38,6 +38,10 @@ export default {
   created() {
     this.getWebSocket();
     this.username = this.$store.state.username;
+    setInterval(()=>{
+      this.messageContent = this.$store.state.chatHistory;
+      this.$forceUpdate()
+    },1000)
   },
   methods: {
     getWebSocket: function () {
@@ -69,8 +73,8 @@ export default {
       } else if (message.messageType === "image") {
         // this.messageContent.push(message.message);
         // <img src="'data:image/png;base64,'+userInfo.imgStr"/>
-        // this.messageContent.push('<img src="' + message.message + '"/>');
-        this.messageContent.push("<img :src=\"" + message.message + "\">");
+        this.messageContent.push('<div>' + '<img width="150px" v-html src='+message.message+'>' + '</div>');
+        // this.messageContent.push("<img :src=\"" + message.message + "\">");
         // $messageContainer.append('<div>' + '<img width="150px" src=' + message.message + '>' + '</div>');
         console.log("received image");
 

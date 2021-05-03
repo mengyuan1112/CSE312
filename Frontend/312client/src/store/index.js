@@ -13,6 +13,7 @@ export default new Vuex.Store({
     username:null,
     loginStatus:false,
     chatWith:null,
+    chatHistory:null,
   },
   mutations: {
     updateusername(state,payload){
@@ -29,13 +30,10 @@ export default new Vuex.Store({
       state.loginStatus = false;
     },
     startChat(state,payload){
-      state.chatWith = payload;
-      // const url = ""
-      // this.$axios.post(url,{from:state.username,to:state.chatWith}).then(res=>{
-      //   if(res === true){
-      //     console.log("start chat");
-      //   }
-      // })
+      state.chatWith = payload[0];
+      console.log("start chat");
+      state.chatHistory = payload[1];
+
     },
     endChat(state){
       state.chatWith = null;

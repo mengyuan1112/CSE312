@@ -40,8 +40,14 @@ export default {
       },1000)
     },
     chatMember:function(member){
-      this.$store.commit("startChat",member)
+      const url = "http://localhost:8080/chatHistory"
+      this.$axios.post(url,{fromUser:this.username,toUser:member}).then(res=>{
+        if(res === true){
+          this.$store.commit("startChat",[member,res.data])
+        }
+      })
       console.log(member);
+      this.$forceUpdate()
     }
   },
   computed:{
