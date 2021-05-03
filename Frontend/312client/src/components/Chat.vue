@@ -59,8 +59,13 @@ export default {
       console.log('WebSocket getting message：%c' + event.data, 'color:green');
       const message = JSON.parse(event.data) || {};
       if (message.messageType === "text") {
+        if(message.toUsername === "All"){
+          this.messageContent.push('Broadcast: ' + message.fromUsername + ' ' + message.message);
+        }else{
+          this.messageContent.push(message.fromUsername + ": " + message.message);
+        }
         console.log("text");
-        this.messageContent.push(message.message);
+
       } else if (message.messageType === "image") {
         // this.messageContent.push(message.message);
         // <img src="'data:image/png;base64,'+userInfo.imgStr"/>
@@ -76,26 +81,15 @@ export default {
     sendImg: function() {
       const files = document.querySelector("#file").files
       if(files.length>0){
-        const username = this.username;
+        // const username = this.username;
         var fileReader = new FileReader();
         fileReader.readAsDataURL(files[0])
         var tmp;
         fileReader.onload = e => {
-
-          tmp = {messageType: "image", fromUsername: username,message:e.target.result};
+          tmp = {messageType: "image", fromUsername: this.$store.state.username, toUsername: this.$store.state.chatWith, message:e.target.result};
           this.webSocket.send(JSON.stringify(tmp));
           // console.log(tmp)
         };
-
-        // fileReader.onload = function(e) {
-        //   var str = fileReader.result;
-        //   var urlDecoded = decodeURIComponent(str);
-        //   this.img = urlDecoded;
-        // }
-
-        // console.log(tmp)
-        // this.webSocket.send(JSON.stringify(s));
-
       }
     },
 
