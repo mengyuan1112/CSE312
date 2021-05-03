@@ -1,6 +1,7 @@
 package cse312.demo.Dao;
 
 
+import cse312.demo.Model.Chat;
 import cse312.demo.Model.User;
 import org.springframework.stereotype.Repository;
 
@@ -13,6 +14,9 @@ public class UserOperator implements Dao{
   public static List<User> UserDB = new ArrayList<>();
   public static Map<String,String> UserInfoDB = new HashMap<>();
   public static Map<User, Boolean> onlineUser = new HashMap<>();
+
+  public static List<Chat> ChatDB = new ArrayList<>();
+
 
   @Override
   public void insertUser(User user) {
@@ -61,5 +65,10 @@ public class UserOperator implements Dao{
   @Override
   public List<User> getAllUser() {
     return UserDB;
+  }
+
+  @Override
+  public void insertChat(Chat chat) {
+    ChatDB.add(chat);
   }
 }
