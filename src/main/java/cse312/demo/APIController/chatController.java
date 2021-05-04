@@ -105,7 +105,6 @@ public class chatController{
         for(Chat tmpChat : chatHistoryDB){
             if((tmpChat.getFromUsername().equals(fromUser) && tmpChat.getToUsername().equals(toUser)) || (tmpChat.getFromUsername().equals(toUser) && tmpChat.getToUsername().equals(fromUser))){
                 String tmpMessage = Chat.jsonStr(tmpChat.getMessageType(), tmpChat.getFromUsername(), tmpChat.getToUsername(),tmpChat.getMessage());
-//                System.out.println(tmpMessage);
                 chatHistory.add(tmpMessage);
             }
         }
