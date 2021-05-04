@@ -17,7 +17,7 @@ import java.util.*;
 
 @Component
 @CrossOrigin(origins = "http://localhost:8081")
-@Controller
+@RestController
 @RequestMapping("/")
 @ServerEndpoint("/chat/{username}")
 public class chatController{
@@ -71,9 +71,7 @@ public class chatController{
 //        System.out.println("The jsonStr: " + jsonStr);
         Chat chat = JSON.parseObject(jsonStr,Chat.class);
         chatService.insertChat(chat);
-//        System.out.println("Message History:");
-//        System.out.println(chat.getMessageType() + ", " + chat.getFromUsername() + ", " + chat.getToUsername() + ", " + chat.getMessage());
-        String message = Chat.jsonStr(chat.getMessageType(), chat.getFromUsername(), chat.getToUsername(),chat.getMessage());
+        String message = Chat.jsonStr(chat.getMessageType(), chat.getFromUsername(), chat.getToUsername(),htmlEscape(chat.getMessage()));
         if(chat.getFromUsername() != null){
             sendToMessage(chat.getFromUsername(), message);
         }
@@ -99,16 +97,28 @@ public class chatController{
     @PostMapping("/chatHistory")
     public List<String> chatHistory(@RequestBody Map<String, String> userPair){
         String fromUser = userPair.get("fromUser");
+        System.out.println("fromUser: " + fromUser);
         String toUser = userPair.get("toUser");
+        System.out.println("toUser: " + toUser);
         List<String> chatHistory = new ArrayList<>();
         List<Chat> chatHistoryDB = chatService.getAllChat();
         for(Chat tmpChat : chatHistoryDB){
             if((tmpChat.getFromUsername().equals(fromUser) && tmpChat.getToUsername().equals(toUser)) || (tmpChat.getFromUsername().equals(toUser) && tmpChat.getToUsername().equals(fromUser))){
-                chatHistory.add(Chat.jsonStr(tmpChat.getMessageType(), tmpChat.getFromUsername(), tmpChat.getToUsername(),tmpChat.getMessage()));
+                String tmpMessage = Chat.jsonStr(tmpChat.getMessageType(), tmpChat.getFromUsername(), tmpChat.getToUsername(),tmpChat.getMessage());
+//                System.out.println(tmpMessage);
+                chatHistory.add(tmpMessage);
             }
         }
         return chatHistory;
     }
+
+    public String htmlEscape(String text){
+        text = text.replace("&", "&amp");
+        text = text.replace("<", "&lt");
+        text = text.replace(">", "&gt");
+        return text;
+    }
+
 
 
 }

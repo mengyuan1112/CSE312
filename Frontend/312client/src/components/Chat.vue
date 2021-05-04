@@ -3,6 +3,7 @@
     <div class="header">
       <h1>ChatBox</h1>
       <i> Welcome! User:</i>
+      <a-button @click="gethistory()">refresh History</a-button>
       <p id="username">{{username}}</p>
     </div>
     <div class="body">
@@ -23,7 +24,6 @@
 </template>
 
 <script>
-
 export default {
   name: "Chat",
   data(){
@@ -38,12 +38,22 @@ export default {
   created() {
     this.getWebSocket();
     this.username = this.$store.state.username;
-    setInterval(()=>{
-      this.messageContent = this.$store.state.chatHistory;
-      this.$forceUpdate()
-    },1000)
+    // setInterval(()=>{
+    //   this.messageContent = this.$store.state.chatHistory;
+    //   this.$forceUpdate()
+    // },1000)
   },
   methods: {
+    gethistory:function(){
+      const url = "http://localhost:8080/chatHistory"
+      this.$axios.post(url,{fromUser:this.username,toUser:this.$store.state.chatWith}).then(res=>{
+        // console.log(res.data)
+        if(res === true){
+          this.messageContent = res.data;
+          this.$forceUpdate();
+        }
+      })
+    },
     getWebSocket: function () {
       this.webSocket = new WebSocket('ws://localhost:8080/chat/' + this.$store.state.username);
       this.webSocket.onopen = function () {
@@ -55,10 +65,8 @@ export default {
       };
       this.webSocket.onerror = function () {
         console.log('WebSocket Error Occur');
-
       };
     },
-
     websocketOnMessage: function (event) {
       console.log('WebSocket getting message：%c' + event.data, 'color:green');
       const message = JSON.parse(event.data) || {};
@@ -69,7 +77,6 @@ export default {
           this.messageContent.push(message.fromUsername + ": " + message.message);
         }
         console.log("text");
-
       } else if (message.messageType === "image") {
         // this.messageContent.push(message.message);
         // <img src="'data:image/png;base64,'+userInfo.imgStr"/>
@@ -77,11 +84,8 @@ export default {
         // this.messageContent.push("<img :src=\"" + message.message + "\">");
         // $messageContainer.append('<div>' + '<img width="150px" src=' + message.message + '>' + '</div>');
         console.log("received image");
-
       }
-
     },
-
     sendImg: function() {
       const files = document.querySelector("#file").files
       if(files.length>0){
@@ -96,19 +100,14 @@ export default {
         };
       }
     },
-
     sendText: function() {
       const message = this.msg;
-
       if (message) {
         const obj = {messageType: "text", fromUsername:this.$store.state.username, toUsername: this.$store.state.chatWith, message: message};
         this.webSocket.send(JSON.stringify(obj));
         this.msg = "";
       }
     }
-
-
-
   }
 }
 </script>
@@ -120,9 +119,7 @@ export default {
   font-family: sans-serif;
   box-sizing: border-box;
   text-align: left;
-
 }
-
 body
 {
   height: 100vh;
@@ -131,7 +128,6 @@ body
   justify-content: center;
   align-items: center;
 }
-
 .container{
   width: 450px;
   height: 80vh;
@@ -144,7 +140,6 @@ body
   color: white;
   padding: 15px;
 }
-
 .body{
   flex: 1;
   color: white;
@@ -159,13 +154,11 @@ body
   border-radius: 10px;
   margin-bottom: 15px;
 }
-
 .user_message{
   margin-left: auto;
   background-color: white;
   color: black;
 }
-
 .footer form{
   display: flex;
 }
@@ -177,7 +170,6 @@ form input{
   padding-left: 5px;
   font-size: 16px;
 }
-
 form button{
   width: 100px;
   font-size: 18px;
