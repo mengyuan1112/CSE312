@@ -3,6 +3,7 @@
     <div class="header">
       <h1>ChatBox</h1>
       <i> Welcome! User:</i>
+      <a-button @click="gethistory()">refresh History</a-button>
       <p id="username">{{username}}</p>
     </div>
     <div class="body">
@@ -38,12 +39,21 @@ export default {
   created() {
     this.getWebSocket();
     this.username = this.$store.state.username;
-    setInterval(()=>{
-      this.messageContent = this.$store.state.chatHistory;
-      this.$forceUpdate()
-    },1000)
+    // setInterval(()=>{
+    //   this.messageContent = this.$store.state.chatHistory;
+    //   this.$forceUpdate()
+    // },1000)
   },
   methods: {
+    gethistory:function(){
+      const url = "http://localhost:8080/chatHistory"
+      this.$axios.post(url,{fromUser:this.username,toUser:this.$store.state.chatWith}).then(res=>{
+        if(res === true){
+          this.messageContent = res.data;
+          this.$forceUpdate();
+        }
+      })
+    },
     getWebSocket: function () {
       this.webSocket = new WebSocket('ws://localhost:8080/chat/' + this.$store.state.username);
       this.webSocket.onopen = function () {
