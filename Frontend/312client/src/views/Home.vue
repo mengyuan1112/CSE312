@@ -6,7 +6,7 @@
       <a-layout-sider class='sider'>       <NavigationBar/></a-layout-sider>
       <a-layout class="body"><Functionality/>
 <!--        <a-layout-content>Content</a-layout-content>-->
-        <Chat/>
+        <div v-if="isChat"><Chat/></div>
       </a-layout>
     </a-layout>
   </div>
@@ -25,9 +25,6 @@ export default {
     }
   },
   methods:{
-    // checklogin:function(){
-    //
-    // }
   },
   components: {
     // HelloWorld,
@@ -41,7 +38,18 @@ export default {
       alert("please log in before continuing ");
       this.$router.push('/login');
     }
-  }
+  },
+  computed:{
+    isChat(){
+      if(this.$store.state.chatWith === null){
+        return false;
+      }
+      else{
+        return true;
+      }
+    }
+  },
+
 }
 </script>
 

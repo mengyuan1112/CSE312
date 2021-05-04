@@ -40,15 +40,35 @@ export default {
       },1000)
     },
     chatMember:function(member){
-      // const url = "http://localhost:8080/chatHistory"
-      // this.$axios.post(url,{fromUser:this.username,toUser:member}).then(res=>{
-      //   if(res === true){
-      //     this.$store.commit("startChat",[member,res.data])
-      //   }
-      // })
-          this.$store.commit("startChat",member)
-      console.log(member);
-      this.$forceUpdate()
+      this.$store.commit("startChat",member)
+        const url = "http://localhost:8080/chatHistory"
+        this.$axios.post(url,{fromUser:this.$store.state.username,toUser:this.$store.state.chatWith}).then(res=>{
+          let tempdata = [];
+          if(!res.data){
+            this.$forceUpdate()
+          }
+          else{
+            for (let i of res.data) {
+              i = JSON.parse(i);
+              console.log(i);
+              if(i.messageType ==="text"){
+                if(i.toUsername === "All"){
+                  tempdata.push('Broadcast: ' + i.fromUsername + ' ' + i.message);
+                }else{
+                  tempdata.push(i.fromUsername + ": " + i.message);
+                }
+              }
+              else if (i.messageType === "image"){
+                if(i.toUsername === "All"){
+                  tempdata.push('Broadcast: ' + i.fromUsername + ' ' + i.message);
+                }else{
+                  tempdata.push(i.fromUsername + ": " + '<div>' + '<img width="300px" v-html src='+i.message+'>' + '</div>');
+                }
+              }
+            }
+          }
+          this.$store.commit("updateChatHistory",tempdata)
+        })
     }
   },
   computed:{

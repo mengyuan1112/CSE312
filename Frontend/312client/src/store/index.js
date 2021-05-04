@@ -31,12 +31,12 @@ export default new Vuex.Store({
     },
     startChat(state,payload){
       state.chatWith = payload;
-      console.log("start chat");
-
     },
     endChat(state){
       state.chatWith = null;
-
+    },
+    updateChatHistory(state,payload){
+      state.chatHistory = payload;
     }
   },
   actions: {
