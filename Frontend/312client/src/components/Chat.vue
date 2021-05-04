@@ -17,10 +17,7 @@
       <!--        <button onclick="sendImg()" id="file">File</button>-->
       <input type="file" id="file" @change="sendImg()">
     </div>
-
-
   </div>
-
 </template>
 
 <script>
@@ -34,6 +31,7 @@ export default {
       messageContent:[],
       img:"",
       username:null,
+      tempdata:null
     }
   },
   created() {
@@ -46,14 +44,37 @@ export default {
   },
   methods: {
     gethistory:function(){
+      this.messageContent = [];
       const url = "http://localhost:8080/chatHistory"
       this.$axios.post(url,{fromUser:this.username,toUser:this.$store.state.chatWith}).then(res=>{
-        if(res === true){
-          this.messageContent = res.data;
-          this.$forceUpdate();
-        }
-      })
-    },
+          this.tempdata = res.data;
+          if(!res.data){
+            this.$forceUpdate()
+          }
+          else{
+            for (let i of res.data) {
+              i = JSON.parse(i);
+              console.log(i);
+              // this.messageContent.push(i);
+              if(i.messageType ==="text"){
+                if(i.toUsername === "All"){
+                  this.messageContent.push('Broadcast: ' + i.fromUsername + ' ' + i.message);
+                }else{
+                  this.messageContent.push(i.fromUsername + ": " + i.message);
+                }
+              }
+              else if (i.messageType === "image"){
+                if(i.toUsername === "All"){
+                  this.messageContent.push('Broadcast: ' + i.fromUsername + ' ' + i.message);
+                }else{
+                  this.messageContent.push(i.fromUsername + ": " + '<div>' + '<img width="150px" v-html src='+i.message+'>' + '</div>');
+                }
+              }
+            }
+          }
+          console.log(res.data);
+        })
+     },
     getWebSocket: function () {
       this.webSocket = new WebSocket('ws://localhost:8080/chat/' + this.$store.state.username);
       this.webSocket.onopen = function () {
