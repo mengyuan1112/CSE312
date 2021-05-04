@@ -3,11 +3,12 @@
     <div class="header">
       <h1>ChatBox</h1>
       <i> Welcome! User:</i>
+      <a-button @click="gethistory()">refresh History</a-button>
       <p id="username">{{username}}</p>
     </div>
     <div class="body">
       <div class="user_message" v-for="(message,index) in messageContent" :key="index">
-        {{message}}
+        <div v-html="message"></div>
       </div>
     </div>
     <div class="footer">
@@ -16,10 +17,7 @@
       <!--        <button onclick="sendImg()" id="file">File</button>-->
       <input type="file" id="file" @change="sendImg()">
     </div>
-
-
   </div>
-
 </template>
 
 <script>
@@ -30,16 +28,53 @@ export default {
     return{
       msg:"",
       webSocket:null,
-      messageContent:[12,1,2],
+      messageContent:[],
       img:"",
       username:null,
+      tempdata:null
     }
   },
   created() {
     this.getWebSocket();
     this.username = this.$store.state.username;
+    // setInterval(()=>{
+    //   this.messageContent = this.$store.state.chatHistory;
+    //   this.$forceUpdate()
+    // },1000)
   },
   methods: {
+    gethistory:function(){
+      this.messageContent = [];
+      const url = "http://localhost:8080/chatHistory"
+      this.$axios.post(url,{fromUser:this.username,toUser:this.$store.state.chatWith}).then(res=>{
+          this.tempdata = res.data;
+          if(!res.data){
+            this.$forceUpdate()
+          }
+          else{
+            for (let i of res.data) {
+              i = JSON.parse(i);
+              console.log(i);
+              // this.messageContent.push(i);
+              if(i.messageType ==="text"){
+                if(i.toUsername === "All"){
+                  this.messageContent.push('Broadcast: ' + i.fromUsername + ' ' + i.message);
+                }else{
+                  this.messageContent.push(i.fromUsername + ": " + i.message);
+                }
+              }
+              else if (i.messageType === "image"){
+                if(i.toUsername === "All"){
+                  this.messageContent.push('Broadcast: ' + i.fromUsername + ' ' + i.message);
+                }else{
+                  this.messageContent.push(i.fromUsername + ": " + '<div>' + '<img width="150px" v-html src='+i.message+'>' + '</div>');
+                }
+              }
+            }
+          }
+          console.log(res.data);
+        })
+     },
     getWebSocket: function () {
       this.webSocket = new WebSocket('ws://localhost:8080/chat/' + this.$store.state.username);
       this.webSocket.onopen = function () {
@@ -59,13 +94,18 @@ export default {
       console.log('WebSocket getting message：%c' + event.data, 'color:green');
       const message = JSON.parse(event.data) || {};
       if (message.messageType === "text") {
+        if(message.toUsername === "All"){
+          this.messageContent.push('Broadcast: ' + message.fromUsername + ' ' + message.message);
+        }else{
+          this.messageContent.push(message.fromUsername + ": " + message.message);
+        }
         console.log("text");
-        this.messageContent.push(message.message);
+
       } else if (message.messageType === "image") {
         // this.messageContent.push(message.message);
         // <img src="'data:image/png;base64,'+userInfo.imgStr"/>
-        // this.messageContent.push('<img src="' + message.message + '"/>');
-        this.messageContent.push("<img :src=\"" + message.message + "\">");
+        this.messageContent.push('<div>' + '<img width="150px" v-html src='+message.message+'>' + '</div>');
+        // this.messageContent.push("<img :src=\"" + message.message + "\">");
         // $messageContainer.append('<div>' + '<img width="150px" src=' + message.message + '>' + '</div>');
         console.log("received image");
 
@@ -76,26 +116,15 @@ export default {
     sendImg: function() {
       const files = document.querySelector("#file").files
       if(files.length>0){
-        const username = this.username;
+        // const username = this.username;
         var fileReader = new FileReader();
         fileReader.readAsDataURL(files[0])
         var tmp;
         fileReader.onload = e => {
-
-          tmp = {messageType: "image", fromUsername: username,message:e.target.result};
+          tmp = {messageType: "image", fromUsername: this.$store.state.username, toUsername: this.$store.state.chatWith, message:e.target.result};
           this.webSocket.send(JSON.stringify(tmp));
           // console.log(tmp)
         };
-
-        // fileReader.onload = function(e) {
-        //   var str = fileReader.result;
-        //   var urlDecoded = decodeURIComponent(str);
-        //   this.img = urlDecoded;
-        // }
-
-        // console.log(tmp)
-        // this.webSocket.send(JSON.stringify(s));
-
       }
     },
 
