@@ -11,7 +11,7 @@ export default new Vuex.Store({
   state: {
     // onlineMembers:["membwwwwwwwwwwwwwssssssssssssssssssswwwer1","member2","member1","member2","member1","member2","member1","member2",],
     username:null,
-    loginStatus:false,
+    loginStatus:true,
     chatWith:null,
     chatHistory:null,
   },
@@ -30,9 +30,8 @@ export default new Vuex.Store({
       state.loginStatus = false;
     },
     startChat(state,payload){
-      state.chatWith = payload[0];
+      state.chatWith = payload;
       console.log("start chat");
-      state.chatHistory = payload[1];
 
     },
     endChat(state){
