@@ -45,7 +45,7 @@ export default {
   methods: {
     gethistory:function(){
       this.messageContent = [];
-      const url = "http://localhost:8080/chatHistory"
+      const url = "http://cse312-12.dcsl.buffalo.edu:8080/chatHistory"
       this.$axios.post(url,{fromUser:this.username,toUser:this.$store.state.chatWith}).then(res=>{
           this.tempdata = res.data;
           if(!res.data){
