@@ -35,7 +35,7 @@ export default {
     submitLogin(){
       const url = "http://cse312-12.dcsl.buffalo.edu:8080/loginform";
       this.axios.post(url,{userName:this.userName,password:this.password}).then(res=>{
-        if(res.data == "true"){
+        if(res.data === "true"){
           alert("You've logged in successful");
           this.$router.push('/');
           this.$store.commit("updateusername",this.userName)
