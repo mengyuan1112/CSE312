@@ -5,7 +5,6 @@ import cse312.demo.Model.Chat;
 import cse312.demo.Service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.*;
@@ -27,7 +26,6 @@ public class chatController{
     @Autowired
     public void setChatService(ChatService chatService) {
         this.chatService = chatService;
-
     }
     static Map<String, Session> onlineSession = new HashMap<>();
 
@@ -68,7 +66,6 @@ public class chatController{
 
     @OnMessage
     public void onMessage(Session session, String jsonStr){
-//        System.out.println("The jsonStr: " + jsonStr);
         Chat chat = JSON.parseObject(jsonStr,Chat.class);
         chatService.insertChat(chat);
         String message = Chat.jsonStr(chat.getMessageType(), chat.getFromUsername(), chat.getToUsername(),htmlEscape(chat.getMessage()));
@@ -97,9 +94,9 @@ public class chatController{
     @PostMapping("/chatHistory")
     public List<String> chatHistory(@RequestBody Map<String, String> userPair){
         String fromUser = userPair.get("fromUser");
-        System.out.println("fromUser: " + fromUser);
+//        System.out.println("fromUser: " + fromUser);
         String toUser = userPair.get("toUser");
-        System.out.println("toUser: " + toUser);
+//        System.out.println("toUser: " + toUser);
         List<String> chatHistory = new ArrayList<>();
         List<Chat> chatHistoryDB = chatService.getAllChat();
         for(Chat tmpChat : chatHistoryDB){
