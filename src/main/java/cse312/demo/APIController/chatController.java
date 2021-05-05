@@ -94,9 +94,9 @@ public class chatController{
     @PostMapping("/chatHistory")
     public List<String> chatHistory(@RequestBody Map<String, String> userPair){
         String fromUser = userPair.get("fromUser");
-//        System.out.println("fromUser: " + fromUser);
+        System.out.println("fromUser: " + fromUser);
         String toUser = userPair.get("toUser");
-//        System.out.println("toUser: " + toUser);
+        System.out.println("toUser: " + toUser);
         List<String> chatHistory = new ArrayList<>();
         List<Chat> chatHistoryDB = chatService.getAllChat();
         for(Chat tmpChat : chatHistoryDB){
