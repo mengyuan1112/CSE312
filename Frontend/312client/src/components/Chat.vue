@@ -2,9 +2,8 @@
   <div class="container">
     <div class="header">
       <h1>ChatBox</h1>
-      <i> Welcome! User:</i>
-      <a-button @click="gethistory()">refresh History</a-button>
-      <p id="username">{{username}}</p>
+      <i> You are chatting with {{chattingWith}}</i>
+
     </div>
     <div class="body">
       <div class="user_message" v-for="(message,index) in messageContent" :key="index">
@@ -43,38 +42,6 @@ export default {
     // },1000)
   },
   methods: {
-    gethistory:function(){
-      this.messageContent = [];
-      const url = "http://cse312-12.dcsl.buffalo.edu:8080/chatHistory"
-      this.$axios.post(url,{fromUser:this.username,toUser:this.$store.state.chatWith}).then(res=>{
-          this.tempdata = res.data;
-          if(!res.data){
-            this.$forceUpdate()
-          }
-          else{
-            for (let i of res.data) {
-              i = JSON.parse(i);
-              console.log(i);
-              // this.messageContent.push(i);
-              if(i.messageType ==="text"){
-                if(i.toUsername === "All"){
-                  this.messageContent.push('Broadcast: ' + i.fromUsername + ' ' + i.message);
-                }else{
-                  this.messageContent.push(i.fromUsername + ": " + i.message);
-                }
-              }
-              else if (i.messageType === "image"){
-                if(i.toUsername === "All"){
-                  this.messageContent.push('Broadcast: ' + i.fromUsername + ' ' + i.message);
-                }else{
-                  this.messageContent.push(i.fromUsername + ": " + '<div>' + '<img width="150px" v-html src='+i.message+'>' + '</div>');
-                }
-              }
-            }
-          }
-          console.log(res.data);
-        })
-     },
     getWebSocket: function () {
       this.webSocket = new WebSocket('ws://cse312-12.dcsl.buffalo.edu:8080/chat/' + this.$store.state.username);
       this.webSocket.onopen = function () {
@@ -96,21 +63,16 @@ export default {
       if (message.messageType === "text") {
         if(message.toUsername === "All"){
           this.messageContent.push('Broadcast: ' + message.fromUsername + ' ' + message.message);
-        }else{
+        }else if( (message.fromUsername === this.$store.state.chatWith && message.toUsername === this.$store.state.username ) || (message.fromUsername === this.$store.state.username && message.toUsername === this.$store.state.chatWith )){
           this.messageContent.push(message.fromUsername + ": " + message.message);
         }
-        console.log("text");
-
       } else if (message.messageType === "image") {
-        // this.messageContent.push(message.message);
-        // <img src="'data:image/png;base64,'+userInfo.imgStr"/>
-        this.messageContent.push('<div>' + '<img width="150px" v-html src='+message.message+'>' + '</div>');
-        // this.messageContent.push("<img :src=\"" + message.message + "\">");
-        // $messageContainer.append('<div>' + '<img width="150px" src=' + message.message + '>' + '</div>');
-        console.log("received image");
-
+        if(message.toUsername === "All"){
+          this.messageContent.push('Broadcast: ' + message.fromUsername + ' ' + message.message);
+        }else if( (message.fromUsername === this.$store.state.chatWith && message.toUsername === this.$store.state.username ) || (message.fromUsername === this.$store.state.username && message.toUsername === this.$store.state.chatWith )){
+          this.messageContent.push('<div>' + '<img width="300px" v-html src='+message.message+'>' + '</div>');
+        }
       }
-
     },
 
     sendImg: function() {
@@ -130,16 +92,27 @@ export default {
 
     sendText: function() {
       const message = this.msg;
-
       if (message) {
         const obj = {messageType: "text", fromUsername:this.$store.state.username, toUsername: this.$store.state.chatWith, message: message};
         this.webSocket.send(JSON.stringify(obj));
         this.msg = "";
       }
     }
-
-
-
+  },
+  computed:{
+    newChatHistory(){
+      return this.$store.state.chatHistory
+    },
+    chattingWith(){
+      return this.$store.state.chatWith
+    }
+  },
+  watch:{
+    newChatHistory(newHistory,oldHistory){
+      console.log(oldHistory);
+      this.messageContent = newHistory;
+      this.$forceUpdate();
+    }
   }
 }
 </script>

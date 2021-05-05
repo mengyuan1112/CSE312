@@ -1,19 +1,18 @@
 <template>
   <div id="Home">
 
-    <!--    <HelloWorld msg="Welcome to Your Vue.js App"/>-->
     <a-layout>
       <a-layout-sider class='sider'>       <NavigationBar/></a-layout-sider>
       <a-layout class="body"><Functionality/>
 <!--        <a-layout-content>Content</a-layout-content>-->
-        <Chat/>
+        <div v-if="isChat"><Chat/></div>
       </a-layout>
     </a-layout>
   </div>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
+
 import NavigationBar from "@/components/NavigationBar";
 import Functionality from "@/components/Functionality";
 import Chat from "@/components/Chat";
@@ -25,12 +24,9 @@ export default {
     }
   },
   methods:{
-    // checklogin:function(){
-    //
-    // }
   },
   components: {
-    // HelloWorld,
+
     NavigationBar,
     Functionality,
     Chat
@@ -41,7 +37,18 @@ export default {
       alert("please log in before continuing ");
       this.$router.push('/login');
     }
-  }
+  },
+  computed:{
+    isChat(){
+      if(this.$store.state.chatWith === null){
+        return false;
+      }
+      else{
+        return true;
+      }
+    }
+  },
+
 }
 </script>
 
