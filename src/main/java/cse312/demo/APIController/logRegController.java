@@ -34,9 +34,9 @@ public class logRegController {
   }
 
   @PostMapping("/loginform")
-  public boolean userLogin( @RequestBody Map<String, String> loginInfo) {
+  public String userLogin( @RequestBody Map<String, String> loginInfo) {
     if (!userService.validateUser(loginInfo.get("userName"),loginInfo.get("password"))) {
-      return false;
+      return "User is not existed";
     }
     User user = null;
     List<User> list = userService.getAllUser();
@@ -46,8 +46,13 @@ public class logRegController {
         break;
       }
     }
+    for(User eachUser: userService.getAllOnlineUser()) {
+      if(eachUser.getUserName().equals(loginInfo.get("userName"))) {
+        return loginInfo.get("userName") + " already login in.";
+      }
+    }
     userService.addOnlineUser(user);
-    return true;
+    return "true";
   }
 
   @GetMapping("/onlineuserfresh")
