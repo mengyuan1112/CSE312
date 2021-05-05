@@ -27,7 +27,7 @@ export default {
   },
   methods:{
     updateOnlineUser:function(){
-      const url = "http://localhost:8080/onlineuserfresh";
+      const url = "http://cse312-12.dcsl.buffalo.edu:8080/onlineuserfresh";
       setInterval(()=>{
         this.axios.get(url).then(res=>{
           this.onlineUser = res.data;
