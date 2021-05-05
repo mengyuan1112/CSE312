@@ -30,7 +30,7 @@ export default {
   },
   methods:{
     alertLogout:function(){
-      const url = "http://localhost:8080/logout";
+      const url = "http://cse312-12.dcsl.buffalo.edu:8080/logout";
       axios.post(url,{userName:this.username})
       this.$store.commit("loginFalse");
       this.$store.commit("clearUsername")

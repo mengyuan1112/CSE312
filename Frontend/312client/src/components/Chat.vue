@@ -44,7 +44,7 @@ export default {
   methods: {
 
     getWebSocket: function () {
-      this.webSocket = new WebSocket('ws://localhost:8080/chat/' + this.$store.state.username);
+      this.webSocket = new WebSocket('ws://cse312-12.dcsl.buffalo.edu:8080/chat/' + this.$store.state.username);
       this.webSocket.onopen = function () {
         console.log('WebSocket Connected');
       };

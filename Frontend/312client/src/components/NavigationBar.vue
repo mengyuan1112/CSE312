@@ -27,7 +27,7 @@ export default {
   },
   methods:{
     updateOnlineUser:function(){
-      const url = "http://localhost:8080/onlineuserfresh";
+      const url = "http://cse312-12.dcsl.buffalo.edu:8080/onlineuserfresh";
       setInterval(()=>{
         this.axios.get(url).then(res=>{
           this.onlineUser = res.data;
@@ -41,7 +41,7 @@ export default {
     },
     chatMember:function(member){
       this.$store.commit("startChat",member)
-        const url = "http://localhost:8080/chatHistory"
+        const url = "http://cse312-12.dcsl.buffalo.edu:8080/chatHistory"
         this.$axios.post(url,{fromUser:this.$store.state.username,toUser:this.$store.state.chatWith}).then(res=>{
           let tempdata = [];
           if(!res.data){
