@@ -52,7 +52,7 @@ public class logRegController {
       }
     }
     userService.addOnlineUser(user);
-    return "true";
+    return "";
   }
 
   @GetMapping("/onlineuserfresh")
