@@ -41,7 +41,7 @@ export default {
   },
   methods:{
     submitRegister(){
-      const url = "http://localhost:8080/registerform";
+      const url = "http://cse312-12.dcsl.buffalo.edu:8080/registerform";
       this.axios.post(url,{personName:this.accountName,userName:this.userName,password:this.password}).then(res=>{
         if(res.data === false){
           alert("userName in use");
