@@ -1,7 +1,6 @@
 <template>
   <div id="Home">
 
-    <!--    <HelloWorld msg="Welcome to Your Vue.js App"/>-->
     <a-layout>
       <a-layout-sider class='sider'>       <NavigationBar/></a-layout-sider>
       <a-layout class="body"><Functionality/>
@@ -13,7 +12,7 @@
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
+
 import NavigationBar from "@/components/NavigationBar";
 import Functionality from "@/components/Functionality";
 import Chat from "@/components/Chat";
@@ -27,7 +26,7 @@ export default {
   methods:{
   },
   components: {
-    // HelloWorld,
+
     NavigationBar,
     Functionality,
     Chat

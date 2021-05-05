@@ -21,7 +21,7 @@ name: "Profile",
   },
   methods:{
     updatePassword:function(){
-      const url = "http://localhost:8080/updateProfile";
+      const url = "http://cse312-12.dcsl.buffalo.edu:8080/updateProfile";
       this.axios.post(url,{userName:this.$store.state.username, password:this.password}).then(res=>{
         if (res.data === true){
           alert(" you have changed your password, please login with your password");

@@ -33,7 +33,7 @@ export default {
   },
   methods:{
     submitLogin(){
-      const url = "http://localhost:8080/loginform";
+      const url = "http://cse312-12.dcsl.buffalo.edu:8080/loginform";
       this.axios.post(url,{userName:this.userName,password:this.password}).then(res=>{
         if(res.data == false){
           alert("Incorrect username or password");
