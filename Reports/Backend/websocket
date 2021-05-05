@@ -33,17 +33,19 @@ series of fundamental method: parseStatus(parsing the http status), parseHeader(
 varible which the API get it by WsHandshakeResponse class(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/WsHandshakeResponse.java). In this class, it read the key in the request header and encode
 it by using CaseInsensitiveKeyMap class(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/util/collections/CaseInsensitiveKeyMap.java),
 
+
+Parse websocket frame:
+Most of the important method for the process the websocket frame is in WsFrameBase class(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/WsFrameBase.java)
+
 Send websocket data frame:
-By using the feature in Session (https://github.com/javaee/websocket-spec/blob/master/api/client/src/main/java/javax/websocket/Session.java), which can do all the operation with the websocket data.
+By using the feature in Session, which can do all the operation with the websocket data.
 For send text, we use RemoteEndpoint.Basic getBasicRemote() to send websocket data frame to the client, which we have the choice that use sendText() to send string type message with opcode 0x1,
 and sendBinary() to send data in bytes with opcode(0x2). RemoteEndpoint send data by the Encoder class which can encode Binary or Text.
-(https://github.com/javaee/websocket-spec/blob/master/api/client/src/main/java/javax/websocket/Encoder.java)
 
 Receive and process websocket data frame:
 When the web container receives a data frame, because the Endpoint has been determined during the handshake phase,
 it only needs to determine whether it is binary data or character data according to the opcode field of the WebSocket data frame. The former uses Decoder. Binary to implement the class. The latter uses Decoder.
 Text to implement the class. After parsing into a Java object, send it like discussed before in the method modified by @OnMessage.
 
-Decoder: https://github.com/javaee/websocket-spec/blob/master/api/client/src/main/java/javax/websocket/Decoder.java 
 
 
