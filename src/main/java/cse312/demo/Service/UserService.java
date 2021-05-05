@@ -48,12 +48,22 @@ public class UserService{
   }
 
   public void addOnlineUser(User user) {
+    for(User eachUser: onlineUser) {
+      if(eachUser.getUserName().equals(user.getUserName())) {
+       return;
+      }
+    }
     onlineUser.add(user);
   }
 
   public void removeLogoutUser(String username) {
-    User user = userRepository.findByUserName(username);
-    onlineUser.remove(user);
+    for(int i = 0; i < onlineUser.size(); i++){
+	User user = onlineUser.get(i);
+	if(user.getUserName().equals(username)) {
+		onlineUser.remove(i);
+		break;
+	}
+    }
   }
 
   public List<User> getAllUser(){

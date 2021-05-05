@@ -15,7 +15,7 @@ import java.util.*;
 
 
 @Component
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://cse312-12.dcsl.buffalo.edu")
 @RestController
 @RequestMapping("/")
 @ServerEndpoint("/chat/{username}")
