@@ -1,29 +1,85 @@
 Open-source websocket library Report:
 
 Library used:
-javax.websocket(CDDL 1.1GPL 2.0)
+javax.websocket(CDDL 1.1 GPL 2.0)
 org.springframework(Apache)
 
 Related files in project:
-src/main/java/cse312/demo/APIController/chatController.java
-This file’s purpose is only for debugging purpose in backend which might be deleted in the future. The code mainly use org.springframework.web.servlet.ModelAndView to wrap a GET request as a ModelandView type, then return to the client side which will initialize a new interface.
-Source Code: https://github.com/spring-projects/spring-framework/blob/master/spring-webmvc/src/main/java/org/springframework/web/servlet/ModelAndView.java
 
-src/main/java/cse312/demo/Configuration/wsConfig.java
-This file is for configure the websocket to be functional by using the ServerEndpointExporter class detects beans of type ServerEndpointConfig and registers with the standard Java Websocket runtime. 
-Source Code: https://github.com/spring-projects/spring-framework/blob/master/spring-websocket/src/main/java/org/springframework/web/socket/server/standard/ServerEndpointExporter.java
+Non-core part(database configuration which have already been described in another report of the backend): 
+File: src/main/java/cse312/demo/Service/ChatService.java
+Set annotation @Service for the User service class which relate to the User Repository then it is able to automatically pair with DB without create something, use Autowire annotation with it,
+it will auto build object db for us. The purpose of this class is to help connect the Data, Model with Restful API. We use service class to call the method or data from the original,
+it will help us to change the requirements and maintain the structure in the future.
 
-Core File: src/main/java/cse312/demo/Service/ChatServer.java
-This file used javax.websocket package in tomcat-embed-websocket:
-https://javaee.github.io/javaee-spec/javadocs/javax/websocket/package-summary.html
-For establish WebSocket which is a two-way communication application layer protocol based on TCP. The Endpoint class is used to implement WebSocket-related business logic and process WebSocket data frames. In this project, we use the javax.websocket.RemoteEndpoint (https://github.com/javaee/websocket-spec/blob/master/api/client/src/main/java/javax/websocket/RemoteEndpoint.java)  instance represents the client.
+Core part(Websocket):
+File: src/main/java/cse312/demo/Configuration/wsConfig.java
+This file is for configure the websocket to be functional by using the ServerEndpointExporter class which is the only class that we used the spring boot websocket dependence, other than this are all from tomcat websocket
+(https://github.com/spring-projects/spring-framework/blob/master/spring-websocket/src/main/java/org/springframework/web/socket/server/standard/ServerEndpointExporter.java) 
+detects beans of type ServerEndpointConfig and registers with the standard Java websocket runtime.
+When start the process:
+First, we customize a configuration class to register ServerEndpointExporter as a bean, and then this bean will enter the registerEndPoints() method when it is initialized, find beans that contain @ServerEndPoint 
+annotations or implement the ServerEndPointConfig interface, and then put them into ServerContainer and we need to find it implement class, WsServerContainer. From the source code of the ServerEndPoint, we can see 
+that the classes we use websocket are registered in the implementation class of the ServerContainer interface, the implementation class WsServerContainer(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/server/WsServerContainer.java) 
+processes these annotations. When addEndpoint WsServerContainer, the main thing is to load the configuration in the annotation into the ServerEndpointConfig class, so that it can be recognized by the system. 
+This uses the builder mode of Builder. After this step is completed, we can find that the configuration formed by the annotation and the interface are all loaded into the ServerPointConfig at this time, 
+which is equivalent to abstracting them out, and then it can only process the ServerEndPointConfig. Then the next step is to process the configuration(things like OnOpen these annotations) of ServerPointConfig(https://github.com/javaee/websocket-spec/blob/master/api/server/src/main/java/javax/websocket/server/ServerEndpointConfig.java) 
+which will lead us to the PojoMethodMapping class(will be explain in the next part)
+the main thing to know is PojoMethodMapping is indeed to deal with the method of storing each annotation and their parameters(onClose, onOpen, onMessage, etc.). From the source code of PojoMethodMapping(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/pojo/PojoMethodMapping.java),
+we can see that the program will identify the parameters of several methods: OnOpen has EndpointConfig, OnClose has CloseReason, OnError has Throwable, and then they need to identify Session and PathParam. 
+The method parameter is a unique class called PojoPathParam(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/pojo/PojoPathParam.java), it has two attributes, 
+one is the parameter annotation (that is, PathParam), and the other is the return value. The next step is to process the mapped routing path through UriTemplate, and form a map with uri and its uriTemplate.
+It can be said that a WebSocket corresponds to a PojoMehodMapping. So we can phrase that: a WebSocket class corresponds to a PojoMethodMapping and UriTemplate, and also corresponds to a ServerEndPointConfig, 
+and then WsServerContainer corresponds to multiple ServerEndPointConfig.
+So far, all things are registered and recognized successfully, then the next step is to execute the process(the main part of how actual websocket have been established).
+
+
+File: src/main/java/cse312/demo/APIController/chatController.java
+This file used javax.websocket package in tomcat-embed-websocket (org.apache.tomcat.websocket) which is JSR 346 (under RFC6455 protocol) defines Java API for creating websocket.
+For establish WebSocket which is a two-way communication application layer protocol based on TCP. The Endpoint class is used to implement WebSocket-related business logic and process WebSocket data frames.
+The @ServerEndpoint marks the POJO as a WebSocket server endpoint. URI of the deployed endpoint is as a text value which invoked whenever a message with text payload is received by this endpoint.
+Payload of the message is mapped to the parameter in PojoEndpointBase class (https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/pojo/PojoEndpointBase.java) 
+which in the source code is called pathParameters. The method doOnOpen get two type of parameters: Session(involve a series of websocket operation method) and EndpointConfig(involve getEncoders(), getDecoders()).
+By ensuring the onOpen from the listening URL is not null, do the series of oepration to decode message from the websocket frame by using the corresponding method in Seesion class, MessageHandler class and EndpointConfig class.
+If there is not an onOpen status from the listening URL, then catch it as a OnError status and close the session as the method handleOnOpenOrCloseError() do.
+For onClose method, same idea as the onOpen, check the parameter got from the ServerEndpoint and see if it is onClose status, then close the session. (same idea with the onError method).
+Note: All the operaton on the onOpen, onClose, onError are in the PojoMethodMapping class(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/pojo/PojoMethodMapping.java)
+
+onOpen Stage:
+Before handshake, it will enter WsFilter(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/server/WsFilter.java) to upgrade the protocol(that is, negotiate to change the protocol in the response to the 
+client). During the upgrade process, it will load the ServerEndPointConfig, request, etc. corresponding to the uri into the PojoEndpointServer, 
+which calls the preInit method of WsHttpUpgradeHandler(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/server/WsHttpUpgradeHandler.java). After the WsFilter is executed, 
+because the protocol needs to be upgraded, it will mark the upgradeToken. At this time, the handler's preinit method will execute the init method and put all these configurations in the session.
+The above is the execution process of onOpen.
+
+onMessage stage:
+First of all, we recall that in the onOpen phase of the execution process, it will put the Handler with the OnMessage annotation in the session. As we have a WsHttpUpgradeHandler class before, Tomcat will call the 
+WsHttpUpgradeHandler upgradeDispatch() method according to the connection status, and then this method will go to the session through WsFrameBase(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/WsFrameBase.java)
+to get the previously registered handler (here is PojoMessageHandlerWholeText(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/pojo/PojoMessageHandlerWholeText.java)), and then call its 
+onMessage method. After this method, the OnMessage method will be called through reflection to execute our own logic.
+The above is the execution process of onMessage.
+Same idea as above with onClose and onError.
+
 Handshake:
-@ServerEndpoint (https://github.com/javaee/websocket-spec/blob/master/api/server/src/main/java/javax/websocket/server/ServerEndpoint.java)  needs to specify a URI. In our code, when the client initiates a WebSocket handshake HTTP request to /chat/{username}, a new ChatServer instance will be created by default and the @OnOpen modified method will be called.
-The library provides 4 annotations for decorating methods: @OnOpen, @OnMessage, @OnError, @OnClose. The modified methods are used to call back when the connection is established, call back when a data frame is received, and call back when the processing logic is abnormal, call back when the connection is closed. For the method that annotated by one of these 4 annotation, the user can specify a Session type parameter in the parameter list of any method.
+For establishing the websocket handshake, by using the API class WsWebSocketContainer(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/WsWebSocketContainer.java). The class contains a
+series of fundamental method: parseStatus(parsing the http status), parseHeader(parsing the http request header), readLine(convert the ByteBuffer to string in line), etc. The subclass HttpResponse contain the HandshakeResponse
+varible which the API get it by WsHandshakeResponse class(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/WsHandshakeResponse.java). In this class, it read the key in the request header and encode
+it by using CaseInsensitiveKeyMap class(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/util/collections/CaseInsensitiveKeyMap.java).
+The CUID "258EAFA5-E914-47DA-95CA-C5AB0DC85B11" is proccessed(encode CUID, read header, etc) in UpgradeUtil class(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/server/UpgradeUtil.java), and WsFilter do the upgrade protocol by
+calling the method doUpgrade in UpgradeUtil class, then establish the handshake.
+
+Parse websocket frame:
+Most of the important method for the process the websocket frame is in WsFrameBase class(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/WsFrameBase.java) and involve all the process for sending
+contains in our project.
+
 Send websocket data frame:
-By using the feature in Session (https://github.com/javaee/websocket-spec/blob/master/api/client/src/main/java/javax/websocket/Session.java), which can do all the operation with the websocket data. For send text, we use RemoteEndpoint.Basic getBasicRemote() to send websocket data frame to the client, which we have the choice that use sendText() to send string type message with opcode 0x1, and sendBinary() to send data in bytes with opcode(0x2). RemoteEndpoint send data by the Encoder class which can encode Binary or Text. (https://github.com/javaee/websocket-spec/blob/master/api/client/src/main/java/javax/websocket/Encoder.java) 
+By using the feature in Session, which can do all the operation with the websocket data.
+For send text, we use WsRemoteEndpointBasic.sendText which the sendText() is using sendString() method in WsRemoteEndpointImplBase(https://github.com/apache/tomcat/blob/master/java/org/apache/tomcat/websocket/WsRemoteEndpointImplBase.java) 
+which call sendMessageBlock() method with the corresponding opCode, payload and the Char Buffer. In our project, the only content are image Base64 encoded string and plain text then the opcode is 0x1, and the data frame being sent
+in this class by series of encoding operation.
+
 Receive and process websocket data frame:
-When the web container receives a data frame, because the Endpoint has been determined during the handshake phase, it only needs to determine whether it is binary data or character data according to the opcode field of the WebSocket data frame. The former uses Decoder.Binary to implement the class. The latter uses Decoder.Text to implement the class. After parsing into a Java object, send it like discussed before in the method modified by @OnMessage.
-Decoder: https://github.com/javaee/websocket-spec/blob/master/api/client/src/main/java/javax/websocket/Decoder.java 
+When the web container receives a data frame, because the Endpoint has been determined during the handshake phase, it only needs to determine whether it is binary data or character data according to the opcode field of the 
+WebSocket data frame which will use a set of method defined in WsFrameBase to read and proccess the encoded data. 
 
-
+Note: In this file also contain the annotation @PostMapping for sending data to the frontend end as an API for database which have already explained in the other report of the backend.
